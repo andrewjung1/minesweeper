@@ -7,6 +7,7 @@ function setup() {
 
   unroundedBomb = random(0, 8);
   bomb = round(unroundedBomb);
+  console.log(bomb);
 }
 var tile = [];
 //var currentPlayer = "X";
@@ -24,9 +25,10 @@ var bomb;
 var tileClickedOn;
 
 function draw() {
+  background(200);
   board();
   tileCoordinates();
-  hoverOverTile();
+  flagIcon();
 }
 
 function board() {
@@ -39,8 +41,9 @@ function board() {
 
 function mouseReleased() {
   for (i = 0; i < 9; i++) {
-    if (tile[i].isClicked(mouseX, mouseY, i)) {
+    if (tile[i].isClicked(mouseX, mouseY, i) && tile[i].hasFlag === false) {
       checkIfBombHasActivated();
+      tile[i].hasBeenClicked = true;
     }
   }
 }
@@ -65,15 +68,32 @@ function tileCoordinates() {
   }
 }
 
-function hoverOverTile() {
-  if (keyIsPressed === true) {
-    if (keyCode === 32) {
-      console.log();
+function keyReleased() {
+  for (i = 0; i < 9; i++) {
+    if (tile[i].isClicked(mouseX, mouseY, i)) {
+      if (keyCode === 32 && tile[i].hasFlag === false) {
+        console.log("spacebar has been pressed on tile " + i);
+        tile[i].hasFlag = true;
+      } else if (keyCode === 32 && tile[i].hasFlag === true) {
+        console.log("flag has been removed");
+        tile[i].hasFlag = false;
+      }
     }
   }
 }
 
-function placingFlag() {}
+function flagIcon() {
+  for (i = 0; i < 9; i++) {
+    if (tile[i].hasFlag === true) {
+      ellipse(
+        (tile[i].leftX + tile[i].rightX) / 2,
+        (tile[i].rightY + tile[i].leftY) / 2,
+        75,
+        75
+      );
+    }
+  }
+}
 
 function tileConstructor(leftX, rightX, leftY, rightY) {
   this.leftX = leftX;
@@ -81,6 +101,7 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
   this.leftY = leftY;
   this.rightY = rightY;
   this.hasBeenClicked = false;
+  this.hasFlag = false;
   this.width = function () {
     return this.rightX - this.leftX;
   };
@@ -94,20 +115,9 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
       mouseY > this.leftY &&
       mouseY < this.rightY
     ) {
-      this.hasBeenClicked = true;
       return true;
     } else {
       return false;
-    }
-  };
-  this.isHovering = function (mouseX, mouseY, i) {
-    if (
-      mouseX > this.leftX &&
-      mouseX < this.rightX &&
-      mouseY > this.leftY &&
-      mouseY < this.rightY
-    ) {
-      return true;
     }
   };
 }
