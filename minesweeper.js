@@ -4,10 +4,15 @@ function setup() {
   frameRate(30);
   textSize(200);
   var unroundedBomb;
-
-  unroundedBomb = random(0, 8);
-  bomb = round(unroundedBomb);
-  console.log(bomb);
+  var bombCount = 4;
+  placeBombs();
+  function placeBombs() {
+    for (var i = 0; i < bombCount; i++) {
+      unroundedBomb = random(0, 8);
+      bomb = round(unroundedBomb);
+      console.log(bomb);
+    }
+  }
 }
 var tile = [];
 //var currentPlayer = "X";
@@ -24,11 +29,14 @@ var bomb;
 
 var tileClickedOn;
 
+var tilesClickedOn = 0;
+
 function draw() {
   background(200);
   board();
   tileCoordinates();
   flagIcon();
+  gameWon();
 }
 
 function board() {
@@ -43,7 +51,17 @@ function mouseReleased() {
   for (i = 0; i < 9; i++) {
     if (tile[i].isClicked(mouseX, mouseY, i) && tile[i].hasFlag === false) {
       checkIfBombHasActivated();
+      placeNumber();
       tile[i].hasBeenClicked = true;
+      tilesClickedOn += 1;
+    }
+  }
+}
+
+function placeNumber() {
+  if (tile[bomb].hasBeenClicked === false) {
+    if (i - 4 === bomb) {
+      console.log("1");
     }
   }
 }
@@ -94,6 +112,16 @@ function flagIcon() {
     }
   }
 }
+
+// function gameWon() {
+//   if (tilesClickedOn >= 8) {
+//     console.log("you win!");
+//   }
+// }
+
+// function gameLost() {
+//   console.log("you lost");
+// }
 
 function tileConstructor(leftX, rightX, leftY, rightY) {
   this.leftX = leftX;
