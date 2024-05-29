@@ -4,17 +4,21 @@ function setup() {
   frameRate(30);
   textSize(200);
   var unroundedBomb;
-  var bombCount = 4;
+  var bombCount = 1;
   placeBombs();
   function placeBombs() {
     for (var i = 0; i < bombCount; i++) {
       unroundedBomb = random(0, 8);
-      bomb = round(unroundedBomb);
-      console.log(bomb);
+      oneNumberBomb = round(unroundedBomb);
+      bombRow = floor(oneNumberBomb / 3);
+      bombColumn = oneNumberBomb % 3;
+      console.log(bombRow);
+      console.log(oneNumberBomb);
     }
   }
 }
-var tile = [];
+var tiles = [];
+
 //var currentPlayer = "X";
 var playerTilesTaken = {};
 
@@ -48,32 +52,37 @@ function board() {
 }
 
 function mouseReleased() {
-  for (i = 0; i < 9; i++) {
-    if (tile[i].isClicked(mouseX, mouseY, i) && tile[i].hasFlag === false) {
-      checkIfBombHasActivated();
-      placeNumber();
-      tile[i].hasBeenClicked = true;
-      tilesClickedOn += 1;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if (
+        tiles[i][j].isClicked(mouseX, mouseY, i, j) &&
+        tiles[i][j].hasFlag === false
+      ) {
+        checkIfBombHasActivated();
+        placeNumber();
+        tiles[i][j].hasBeenClicked = true;
+        tilesClickedOn += 1;
+      }
     }
   }
 }
 
 function placeNumber() {
-  if (tile[bomb].hasBeenClicked === false) {
-    if (i - 4 === bomb) {
-      console.log("1");
+  if (tiles[i + 1][j].isClicked) {
+    if (i >= 0 && i <= 2 && j >= 0 && j <= 2) {
     }
   }
 }
 
 function checkIfBombHasActivated() {
-  if (tile[bomb].hasBeenClicked === true) {
+  if (tiles[bombRow][bombColumn].hasBeenClicked === true) {
     console.log("bomb has been clicked");
     console.log("bomb is " + bomb);
   }
 }
 function tileCoordinates() {
   for (var y = 0; y < 3; y++) {
+    var tileRow = [];
     for (var x = 0; x < 3; x++) {
       var tileForConstructor = new tileConstructor(
         x * 200,
@@ -81,47 +90,51 @@ function tileCoordinates() {
         y * 200,
         y * 200 + 200
       );
-      tile.push(tileForConstructor);
+      tileRow.push(tileForConstructor);
     }
+    tiles.push(tileRow);
   }
 }
-
 function keyReleased() {
-  for (i = 0; i < 9; i++) {
-    if (tile[i].isClicked(mouseX, mouseY, i)) {
-      if (keyCode === 32 && tile[i].hasFlag === false) {
-        console.log("spacebar has been pressed on tile " + i);
-        tile[i].hasFlag = true;
-      } else if (keyCode === 32 && tile[i].hasFlag === true) {
-        console.log("flag has been removed");
-        tile[i].hasFlag = false;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if (tiles[i][j].isClicked(mouseX, mouseY, i)) {
+        if (keyCode === 32 && tiles[i][j].hasFlag === false) {
+          console.log("spacebar has been pressed on tile " + i);
+          tiles[i][j].hasFlag = true;
+        } else if (keyCode === 32 && tiles[i][j].hasFlag === true) {
+          console.log("flag has been removed");
+          tiles[i][j].hasFlag = false;
+        }
       }
     }
   }
 }
 
 function flagIcon() {
-  for (i = 0; i < 9; i++) {
-    if (tile[i].hasFlag === true) {
-      ellipse(
-        (tile[i].leftX + tile[i].rightX) / 2,
-        (tile[i].rightY + tile[i].leftY) / 2,
-        75,
-        75
-      );
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if (tiles[i][j].hasFlag === true) {
+        ellipse(
+          (tiles[i][j].leftX + tiles[i][j].rightX) / 2,
+          (tiles[i][j].rightY + tiles[i][j].leftY) / 2,
+          75,
+          75
+        );
+      }
     }
   }
 }
 
-// function gameWon() {
-//   if (tilesClickedOn >= 8) {
-//     console.log("you win!");
-//   }
-// }
+function gameWon() {
+  if (tilesClickedOn >= 8) {
+    console.log("you win!");
+  }
+}
 
-// function gameLost() {
-//   console.log("you lost");
-// }
+function gameLost() {
+  console.log("you lost");
+}
 
 function tileConstructor(leftX, rightX, leftY, rightY) {
   this.leftX = leftX;
@@ -136,7 +149,7 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
   this.height = function () {
     return this.rightY - this.leftY;
   };
-  this.isClicked = function (mouseX, mouseY, i) {
+  this.isClicked = function (mouseX, mouseY, i, j) {
     if (
       mouseX > this.leftX &&
       mouseX < this.rightX &&
