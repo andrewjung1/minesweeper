@@ -35,6 +35,10 @@ var tileClickedOn;
 
 var tilesClickedOn = 0;
 
+var bombRow;
+
+var bombColumn;
+
 function draw() {
   background(200);
   board();
@@ -59,17 +63,26 @@ function mouseReleased() {
         tiles[i][j].isClicked(mouseX, mouseY, i, j) &&
         tiles[i][j].hasFlag === false
       ) {
-        placeNumber();
+        placeNumber(i, j);
         tiles[i][j].hasBeenClicked = true;
         tilesClickedOn += 1;
+        console.log(tiles[i][j].bombsAround);
       }
     }
   }
 }
 
-function placeNumber() {
-  if (tiles[i + 1][j].isClicked) {
-    if (i >= 0 && i <= 2 && j >= 0 && j <= 2) {
+function placeNumber(i, j) {
+  for (var x = -1; x < 1; x++) {
+    for (var y = -1; y < 1; y++) {
+      if (x != 0 && y != 0) {
+        if (i + x >= 0 && i + x <= 2 && j + y >= 0 && j + y <= 2) {
+          if ((tiles[i + x][j + y] = tiles[bombRow][bombColumn])) {
+            // Andrew: come back to this
+            tiles[i][j].bombsAround += 1;
+          }
+        }
+      }
     }
   }
 }
@@ -142,6 +155,7 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
   this.rightY = rightY;
   this.hasBeenClicked = false;
   this.hasFlag = false;
+  this.bombsAround = 0;
   this.width = function () {
     return this.rightX - this.leftX;
   };
