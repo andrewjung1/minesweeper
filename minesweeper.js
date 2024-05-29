@@ -13,7 +13,7 @@ function setup() {
       bombRow = floor(oneNumberBomb / 3);
       bombColumn = oneNumberBomb % 3;
       console.log(bombRow);
-      console.log(oneNumberBomb);
+      console.log(bombColumn);
     }
   }
 }
@@ -41,6 +41,7 @@ function draw() {
   tileCoordinates();
   flagIcon();
   gameWon();
+  checkIfBombHasActivated();
 }
 
 function board() {
@@ -58,7 +59,6 @@ function mouseReleased() {
         tiles[i][j].isClicked(mouseX, mouseY, i, j) &&
         tiles[i][j].hasFlag === false
       ) {
-        checkIfBombHasActivated();
         placeNumber();
         tiles[i][j].hasBeenClicked = true;
         tilesClickedOn += 1;
@@ -76,8 +76,7 @@ function placeNumber() {
 
 function checkIfBombHasActivated() {
   if (tiles[bombRow][bombColumn].hasBeenClicked === true) {
-    console.log("bomb has been clicked");
-    console.log("bomb is " + bomb);
+    console.log("game lost");
   }
 }
 function tileCoordinates() {
