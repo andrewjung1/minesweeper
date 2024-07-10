@@ -1,17 +1,17 @@
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(1000, 1000);
   background(200);
   frameRate(30);
   textSize(200);
   var unroundedBomb;
-  var bombCount = 1;
+  var bombCount = 5;
   placeBombs();
   function placeBombs() {
     for (var i = 0; i < bombCount; i++) {
-      unroundedBomb = random(0, 8);
+      unroundedBomb = random(0, 25);
       oneNumberBomb = round(unroundedBomb);
-      bombRow = floor(oneNumberBomb / 3);
-      bombColumn = oneNumberBomb % 3;
+      bombRow = floor(oneNumberBomb / 5);
+      bombColumn = oneNumberBomb % 5;
       console.log("bomb is on, " + bombRow + "," + bombColumn);
     }
   }
@@ -50,15 +50,19 @@ function draw() {
 
 function board() {
   fill(255);
-  line(0, 200, 600, 200);
-  line(0, 400, 600, 400);
-  line(200, 0, 200, 600);
-  line(400, 0, 400, 600);
+  line(0, 200, 1000, 200);
+  line(0, 400, 1000, 400);
+  line(0, 600, 1000, 600);
+  line(0, 800, 1000, 800);
+  line(200, 0, 200, 1000);
+  line(400, 0, 400, 1000);
+  line(600, 0, 600, 1000);
+  line(800, 0, 800, 1000);
 }
 
 function mouseReleased() {
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (i = 0; i < 5; i++) {
+    for (j = 0; j < 5; j++) {
       if (
         tiles[i][j].isClicked(mouseX, mouseY, i, j) &&
         tiles[i][j].hasFlag === false &&
@@ -96,8 +100,8 @@ function placeNumber(clickedX, clickedY) {
 }
 
 function drawNumbers() {
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (i = 0; i < 5; i++) {
+    for (j = 0; j < 5; j++) {
       if (tiles[i][j].hasBeenClicked === true) {
         tiles[i][j].placeBombNumber(tiles[i][j].bombsAround);
       }
@@ -111,9 +115,9 @@ function checkIfBombHasActivated() {
   }
 }
 function tileCoordinates() {
-  for (var y = 0; y < 3; y++) {
+  for (var y = 0; y < 5; y++) {
     var tileRow = [];
-    for (var x = 0; x < 3; x++) {
+    for (var x = 0; x < 5; x++) {
       var tileForConstructor = new tileConstructor(
         x * 200,
         x * 200 + 200,
@@ -126,8 +130,8 @@ function tileCoordinates() {
   }
 }
 function keyReleased() {
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (i = 0; i < 5; i++) {
+    for (j = 0; j < 5; j++) {
       if (tiles[i][j].isClicked(mouseX, mouseY, i)) {
         if (keyCode === 32 && tiles[i][j].hasFlag === false) {
           console.log("spacebar has been pressed on tile " + i);
@@ -142,8 +146,8 @@ function keyReleased() {
 }
 
 function flagIcon() {
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (i = 0; i < 5; i++) {
+    for (j = 0; j < 5; j++) {
       if (tiles[i][j].hasFlag === true) {
         ellipse(
           (tiles[i][j].leftX + tiles[i][j].rightX) / 2,
@@ -157,7 +161,7 @@ function flagIcon() {
 }
 
 function gameWon() {
-  if (tilesClickedOn > 7) {
+  if (tilesClickedOn >= 20) {
     console.log("you win!");
   }
 }
