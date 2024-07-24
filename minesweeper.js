@@ -1,20 +1,10 @@
 function setup() {
-  createCanvas(1000, 1000);
+  createCanvas(boardSizeX * 200, boardSizeY * 200);
   background(200);
   frameRate(30);
   textSize(200);
-  var unroundedBomb;
-  var bombCount = 5;
+  tileCoordinates();
   placeBombs();
-  function placeBombs() {
-    for (var i = 0; i < bombCount; i++) {
-      unroundedBomb = random(0, 25);
-      oneNumberBomb = round(unroundedBomb);
-      bombRow = floor(oneNumberBomb / 5);
-      bombColumn = oneNumberBomb % 5;
-      console.log("bomb is on, " + bombRow + "," + bombColumn);
-    }
-  }
 }
 var tiles = [];
 
@@ -30,39 +20,64 @@ var tile0 = {
 
 var bomb;
 
+var boardSizeX = 5;
+var boardSizeY = 5;
+
 var tileClickedOn;
 
 var tilesClickedOn = 0;
 
-var bombRow;
-
-var bombColumn;
-
 function draw() {
   background(200);
   board();
-  tileCoordinates();
   flagIcon();
   gameWon();
-  checkIfBombHasActivated();
   drawNumbers();
+}
+
+function placeBombs() {
+  var unroundedBomb;
+  var bombCount = 5;
+  for (var i = 0; i < bombCount; i++) {
+    var bombRow;
+    var bombColumn;
+    unroundedBomb = random(0, 25);
+    oneNumberBomb = round(unroundedBomb);
+    bombRow = floor(oneNumberBomb / 5);
+    bombColumn = oneNumberBomb % 5;
+    tiles[bombRow][bombColumn].isBomb = true;
+  }
+  for (i = 0; i < boardSizeX; i++) {
+    for (j = 0; j < boardSizeY; j++) {
+      if (tiles[i][j].isBomb) {
+        console.log("bomb is on: " + i + ", " + j);
+      }
+    }
+  }
 }
 
 function board() {
   fill(255);
-  line(0, 200, 1000, 200);
-  line(0, 400, 1000, 400);
-  line(0, 600, 1000, 600);
-  line(0, 800, 1000, 800);
-  line(200, 0, 200, 1000);
-  line(400, 0, 400, 1000);
-  line(600, 0, 600, 1000);
-  line(800, 0, 800, 1000);
+  strokeWeight(5);
+  // line(0, 200, 1000, 200);
+  // line(0, 400, 1000, 400);
+  // line(0, 600, 1000, 600);
+  // line(0, 800, 1000, 800);
+  // line(200, 0, 200, 1000);
+  // line(400, 0, 400, 1000);
+  // line(600, 0, 600, 1000);
+  // line(800, 0, 800, 1000);
+  for (var i = 0; i < boardSizeX; i++) {
+    line(0, i * 200, boardSizeX * 200, i * 200);
+  }
+  for (var j = 0; j < boardSizeY; j++) {
+    line(j * 200, 0, j * 200, boardSizeY * 200);
+  }
 }
 
 function mouseReleased() {
-  for (i = 0; i < 5; i++) {
-    for (j = 0; j < 5; j++) {
+  for (i = 0; i < boardSizeX; i++) {
+    for (j = 0; j < boardSizeY; j++) {
       if (
         tiles[i][j].isClicked(mouseX, mouseY, i, j) &&
         tiles[i][j].hasFlag === false &&
@@ -72,6 +87,7 @@ function mouseReleased() {
         tiles[i][j].hasBeenClicked = true;
         placeNumber(i, j);
         tilesClickedOn += 1;
+        checkIfBombHasActivated();
       }
     }
   }
@@ -83,15 +99,13 @@ function placeNumber(clickedX, clickedY) {
       if (!(j == 0 && i == 0)) {
         if (
           clickedY + j >= 0 &&
-          clickedY + j <= 2 &&
+          clickedY + j <= boardSizeY - 1 &&
           clickedX + i >= 0 &&
-          clickedX + i <= 2
+          clickedX + i <= boardSizeX - 1
         ) {
-          if (j + clickedY === bombColumn) {
-            if (i + clickedX === bombRow) {
-              tiles[clickedX][clickedY].bombsAround += 1;
-              console.log("there are " + tiles[clickedX][clickedY].bombsAround);
-            }
+          if (tiles[i + clickedX][j + clickedY].isBomb === true) {
+            tiles[clickedX][clickedY].bombsAround += 1;
+            console.log("there are " + tiles[clickedX][clickedY].bombsAround);
           }
         }
       }
@@ -100,8 +114,8 @@ function placeNumber(clickedX, clickedY) {
 }
 
 function drawNumbers() {
-  for (i = 0; i < 5; i++) {
-    for (j = 0; j < 5; j++) {
+  for (i = 0; i < boardSizeX; i++) {
+    for (j = 0; j < boardSizeY; j++) {
       if (tiles[i][j].hasBeenClicked === true) {
         tiles[i][j].placeBombNumber(tiles[i][j].bombsAround);
       }
@@ -110,14 +124,14 @@ function drawNumbers() {
 }
 
 function checkIfBombHasActivated() {
-  if (tiles[bombRow][bombColumn].hasBeenClicked === true) {
+  if (tiles[i][j].isBomb === true) {
     console.log("game lost");
   }
 }
 function tileCoordinates() {
-  for (var y = 0; y < 5; y++) {
+  for (var y = 0; y < boardSizeX; y++) {
     var tileRow = [];
-    for (var x = 0; x < 5; x++) {
+    for (var x = 0; x < boardSizeY; x++) {
       var tileForConstructor = new tileConstructor(
         x * 200,
         x * 200 + 200,
@@ -130,8 +144,8 @@ function tileCoordinates() {
   }
 }
 function keyReleased() {
-  for (i = 0; i < 5; i++) {
-    for (j = 0; j < 5; j++) {
+  for (i = 0; i < boardSizeX; i++) {
+    for (j = 0; j < boardSizeY; j++) {
       if (tiles[i][j].isClicked(mouseX, mouseY, i)) {
         if (keyCode === 32 && tiles[i][j].hasFlag === false) {
           console.log("spacebar has been pressed on tile " + i);
@@ -146,8 +160,8 @@ function keyReleased() {
 }
 
 function flagIcon() {
-  for (i = 0; i < 5; i++) {
-    for (j = 0; j < 5; j++) {
+  for (i = 0; i < boardSizeX; i++) {
+    for (j = 0; j < boardSizeY; j++) {
       if (tiles[i][j].hasFlag === true) {
         ellipse(
           (tiles[i][j].leftX + tiles[i][j].rightX) / 2,
@@ -173,6 +187,7 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
   this.bottomY = rightY;
   this.hasBeenClicked = false;
   this.hasFlag = false;
+  this.isBomb = false;
   this.bombsAround = 0;
   this.width = function () {
     return this.rightX - this.leftX;
