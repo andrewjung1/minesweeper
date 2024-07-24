@@ -1,3 +1,5 @@
+
+
 function setup() {
   createCanvas(boardSizeX * 200, boardSizeY * 200);
   background(200);
@@ -18,6 +20,7 @@ var tile0 = {
   bottomY: 200,
 };
 
+// some nitpicky organization improvements are recommended here
 var bomb;
 
 var boardSizeX = 5;
@@ -87,7 +90,7 @@ function mouseReleased() {
         tiles[i][j].hasBeenClicked = true;
         placeNumber(i, j);
         tilesClickedOn += 1;
-        checkIfBombHasActivated();
+        checkIfBombHasActivated();  // Something to improve here
       }
     }
   }
@@ -175,7 +178,7 @@ function flagIcon() {
 }
 
 function gameWon() {
-  if (tilesClickedOn >= 20) {
+  if (tilesClickedOn >= 20) { // something to improve here
     console.log("you win!");
   }
 }
@@ -207,7 +210,7 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
       return false;
     }
   };
-  this.placeBombNumber = function () {
+  this.placeBombNumber = function () { // something to improve here
     textSize(40);
     text(
       this.bombsAround,
