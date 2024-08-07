@@ -19,8 +19,8 @@ var tile0 = {
   bottomY: 200,
 };
 
-var boardSizeX = 4;
-var boardSizeY = 4;
+var boardSizeX = 5;
+var boardSizeY = 5;
 var bomb;
 var tileClickedOn;
 var tilesClickedOn = 0;
@@ -32,7 +32,7 @@ function draw() {
   flagIcon();
   gameWon();
   drawNumbers();
-  mainMenu();
+  //mainMenu();
 }
 
 function mainMenu() {
@@ -59,10 +59,14 @@ function placeBombs() {
   for (var i = 0; i < bombCount; i++) {
     var bombRow;
     var bombColumn;
-    unroundedBomb = random(0, 25);
-    oneNumberBomb = round(unroundedBomb);
-    bombRow = floor(oneNumberBomb / 5);
-    bombColumn = oneNumberBomb % 5;
+    // unroundedBomb = random(0, boardSizeX * boardSizeY - 1);
+    // oneNumberBomb = round(unroundedBomb);
+    // bombRow = floor(oneNumberBomb / boardSizeX);
+    // bombColumn = oneNumberBomb % boardSizeX;
+
+    bombRow = round(random(0, boardSizeX - 1));
+    bombColumn = round(random(0, boardSizeY - 1));
+
     tiles[bombRow][bombColumn].isBomb = true;
   }
   for (i = 0; i < boardSizeX; i++) {
@@ -121,18 +125,17 @@ function placeNumber(clickedX, clickedY) {
           clickedX + i >= 0 &&
           clickedX + i <= boardSizeX - 1
         ) {
-          clickEmptyTiles;
-        }
-        if (tiles[i + clickedX][j + clickedY].isBomb === true) {
-          tiles[clickedX][clickedY].bombsAround += 1;
-          console.log("there are " + tiles[clickedX][clickedY].bombsAround);
+          clickEmptyTiles(clickedX, clickedY);
+          if (tiles[i + clickedX][j + clickedY].isBomb === true) {
+            tiles[clickedX][clickedY].bombsAround += 1;
+            console.log("there are " + tiles[clickedX][clickedY].bombsAround);
+          }
         }
       }
     }
   }
 }
-
-function clickEmptyTiles() {
+function clickEmptyTiles(clickedX, clickedY) {
   if (tiles[clickedX][clickedY].bombsAround === 0) {
     console.log("tile is empty");
   }
