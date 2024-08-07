@@ -3,6 +3,7 @@ function setup() {
   background(200);
   frameRate(30);
   textSize(200);
+
   tileCoordinates();
   placeBombs();
 }
@@ -18,14 +19,12 @@ var tile0 = {
   bottomY: 200,
 };
 
+var boardSizeX = 4;
+var boardSizeY = 4;
 var bomb;
-
-var boardSizeX = 5;
-var boardSizeY = 5;
-
 var tileClickedOn;
-
 var tilesClickedOn = 0;
+var bombCount = 5;
 
 function draw() {
   background(200);
@@ -33,11 +32,30 @@ function draw() {
   flagIcon();
   gameWon();
   drawNumbers();
+  mainMenu();
+}
+
+function mainMenu() {
+  fill(200);
+  textSize(100);
+  rect(0, 0, boardSizeX * 150, boardSizeY * 200);
+  fill(0);
+  text("Minesweeper", boardSizeX * 100, boardSizeX * 70);
+  fill(255);
+  rect(boardSizeX * 100 - 150, boardSizeY * 135, 300, 100);
+  fill(0);
+  textSize(60);
+  text("Start?", 420, 744);
+  fill(255);
+  textSize(200);
+  if (mouseX > 1050 && mouseX < 675) {
+    console.log("mouse is over hte thing");
+  }
+  //goes to mouse released
 }
 
 function placeBombs() {
   var unroundedBomb;
-  var bombCount = 5;
   for (var i = 0; i < bombCount; i++) {
     var bombRow;
     var bombColumn;
@@ -83,11 +101,11 @@ function mouseReleased() {
         tiles[i][j].hasFlag === false &&
         tiles[i][j].hasBeenClicked === false
       ) {
+        checkIfBombHasActivated();
         console.log("clicked: tiles[" + i + "][" + j + "]");
         tiles[i][j].hasBeenClicked = true;
         placeNumber(i, j);
         tilesClickedOn += 1;
-        checkIfBombHasActivated();
       }
     }
   }
@@ -103,13 +121,20 @@ function placeNumber(clickedX, clickedY) {
           clickedX + i >= 0 &&
           clickedX + i <= boardSizeX - 1
         ) {
-          if (tiles[i + clickedX][j + clickedY].isBomb === true) {
-            tiles[clickedX][clickedY].bombsAround += 1;
-            console.log("there are " + tiles[clickedX][clickedY].bombsAround);
-          }
+          clickEmptyTiles;
+        }
+        if (tiles[i + clickedX][j + clickedY].isBomb === true) {
+          tiles[clickedX][clickedY].bombsAround += 1;
+          console.log("there are " + tiles[clickedX][clickedY].bombsAround);
         }
       }
     }
+  }
+}
+
+function clickEmptyTiles() {
+  if (tiles[clickedX][clickedY].bombsAround === 0) {
+    console.log("tile is empty");
   }
 }
 
@@ -175,7 +200,7 @@ function flagIcon() {
 }
 
 function gameWon() {
-  if (tilesClickedOn >= 20) {
+  if (tilesClickedOn >= boardSizeX * boardSizeY - bombCount) {
     console.log("you win!");
   }
 }
@@ -207,10 +232,10 @@ function tileConstructor(leftX, rightX, leftY, rightY) {
       return false;
     }
   };
-  this.placeBombNumber = function () {
+  this.placeBombNumber = function (numberOfBombs) {
     textSize(40);
     text(
-      this.bombsAround,
+      numberOfBombs,
       this.leftX + this.width() / 2,
       this.topY + this.height() / 2
     );
