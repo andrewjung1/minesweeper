@@ -1,5 +1,4 @@
 // to do
-// make it so that if a number has been assigned to a tile the number cannot be changed
 // make it so that when you click on a zero it does the entire tile thing until it reaches a tile with a bomb nearby it or it reaches a bomb
 //
 
@@ -28,7 +27,7 @@ var boardSizeY = 5;
 var tileClickedOn;
 //used to see if you have won the game
 var tilesClickedOn = 0;
-var bombCount = 5;
+var bombCount = 1;
 //only for main menu
 var gameHasStarted = true;
 
