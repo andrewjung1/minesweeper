@@ -103,7 +103,6 @@ function mouseReleased() {
         tiles[i][j].hasBeenClicked = true;
         //console.log("placed number on original clicked tile");
         if (tiles[i][j].bombsAround === 0) {
-          clickEmptyTiles(i, j);
         }
         tilesClickedOn += 1;
       }
@@ -120,27 +119,10 @@ function mouseReleased() {
   }
 }
 
-function clickEmptyTiles(clickedX, clickedY) {
-  for (var i = -1; i < 2; i++) {
-    for (var j = -1; j < 2; j++) {
-      if (!(j == 0 && i == 0)) {
-        if (
-          clickedY + j >= 0 &&
-          clickedY + j <= boardSizeY - 1 &&
-          clickedX + i >= 0 &&
-          clickedX + i <= boardSizeX - 1
-        ) {
-          if (tiles[clickedX + i][clickedY + j].isBomb === false) {
-            calculateBombsAroundTile(i + clickedX, j + clickedY);
-            tiles[i + clickedX][j + clickedY].hasBeenClicked = true;
-            tilesClickedOn + 1;
-          }
-        }
-      }
-    }
-  }
-}
 function calculateBombsAroundTile(clickedX, clickedY) {
+  if (clickedX < 0 || clickedY < 0) {
+    return;
+  }
   console.log("Calculating bombs on X =", clickedX, " Y =", clickedY);
   var currentX = 0;
   var currentY = 0;
@@ -161,6 +143,13 @@ function calculateBombsAroundTile(clickedX, clickedY) {
           ) {
             tiles[clickedX][clickedY].bombsAround += 1;
           }
+        }
+      }
+    }
+    if (tiles[clickedX][clickedY].bombsAround === 0) {
+      for (var i = -1; i < 2; i++) {
+        for (var j = -1; j < 2; j++) {
+          calculateBombsAroundTile(i + clickedX, j + clickedY);
         }
       }
     }
